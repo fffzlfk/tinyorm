@@ -29,13 +29,13 @@ func (s *Session) CreateTable() error {
 	for _, field := range table.Fields {
 		columns = append(columns, fmt.Sprintf("%s %s %s", field.Name, field.Type, field.Tag))
 	}
-	desc := strings.Join(columns, ",")
-	_, err := s.Raw(fmt.Sprintf("create table %s (%s)", table.Name, desc)).Exec()
+	desc := strings.Join(columns, ", ")
+	_, err := s.Raw(fmt.Sprintf("CREATE TABLE %s (%s)", table.Name, desc)).Exec()
 	return err
 }
 
 func (s *Session) DropTable() error {
-	_, err := s.Raw(fmt.Sprintf("drop table if exists %s", s.RefTable().Name)).Exec()
+	_, err := s.Raw(fmt.Sprintf("DROP TABLE IF EXISTS %s", s.RefTable().Name)).Exec()
 	return err
 }
 
