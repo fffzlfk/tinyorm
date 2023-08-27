@@ -9,6 +9,7 @@ import (
 func (s *Session) Insert(values ...any) (int64, error) {
 	recordValues := make([]any, 0, len(values))
 	for _, value := range values {
+		s.CallMethod(BeforeInsert, value)
 		table := s.Model(value).RefTable()
 		s.clause.Set(clause.Insert, table.Name, table.FieldNames)
 		recordValues = append(recordValues, table.RecordValues(value))
@@ -42,6 +43,7 @@ func (s *Session) Find(values any) error {
 		if err := rows.Scan(values...); err != nil {
 			return err
 		}
+		s.CallMethod(AfterQuery, dest.Addr().Interface())
 		destSlice.Set(reflect.Append(destSlice, dest))
 	}
 	return rows.Close()
