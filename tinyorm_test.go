@@ -69,3 +69,21 @@ func transactionCommit(t *testing.T) {
 	assert.Equal(t, 19, p.Age)
 	assert.Equal(t, "Jack", p.Name)
 }
+
+func TestEngine_Migrate(t *testing.T) {
+	engine := openDB(t)
+	defer engine.Close()
+
+	s := engine.NewSession()
+	_, _ = s.Raw("DROP TABLE IF EXISTS Person").Exec()
+	_, _ = s.Raw("CREATE TABLE Person(Name text PRIMARY KEY, XXX int)").Exec()
+	_, _ = s.Raw("INSERT INTO Person(Name) VALUES (?), (?)", "Jack", "Tom").Exec()
+	err := engine.Migrate(&tests.Person{})
+	assert.NoError(t, err)
+	rows, err := s.Raw("SELECT * FROM Person").QueryRows()
+	assert.NoError(t, err)
+
+	cols, err := rows.Columns()
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"name", "age"}, cols)
+}

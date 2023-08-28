@@ -22,18 +22,18 @@ func init() {
 	generators[Count] = _count
 }
 
+func _insert(values ...any) (string, []any) {
+	tableName := values[0]
+	fields := strings.Join(values[1].([]string), ", ")
+	return fmt.Sprintf("INSERT INTO %s (%s)", tableName, fields), values[2:]
+}
+
 func genBindVars(num int) string {
 	vars := make([]string, 0, num)
 	for i := 0; i < num; i++ {
 		vars = append(vars, "?")
 	}
 	return strings.Join(vars, ", ")
-}
-
-func _insert(values ...any) (string, []any) {
-	tableName := values[0]
-	fields := strings.Join(values[1].([]string), ", ")
-	return fmt.Sprintf("INSERT INTO %s (%s)", tableName, fields), values[2:]
 }
 
 func _values(values ...any) (string, []any) {

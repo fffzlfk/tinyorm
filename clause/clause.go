@@ -1,7 +1,6 @@
 package clause
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -37,13 +36,13 @@ func (c *Clause) Set(name Type, args ...any) {
 func (c *Clause) Build(orders ...Type) (string, []any) {
 	sqls := make([]string, 0, len(orders))
 	vars := make([]any, 0, len(orders))
-	i := 1
+	// i := 1
 	for _, order := range orders {
 		if sql, ok := c.sql[order]; ok {
-			for strings.Contains(sql, "?") {
-				sql = strings.Replace(sql, "?", "$"+strconv.Itoa(i), 1)
-				i++
-			}
+			// for strings.Contains(sql, "?") {
+			// 	sql = strings.Replace(sql, "?", "$"+strconv.Itoa(i), 1)
+			// 	i++
+			// }
 			sqls = append(sqls, sql)
 			vars = append(vars, c.sqlVars[order]...)
 		}

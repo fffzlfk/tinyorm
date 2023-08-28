@@ -2,6 +2,7 @@ package session
 
 import (
 	"database/sql"
+	"strconv"
 	"strings"
 
 	"tinyorm/clause"
@@ -56,10 +57,18 @@ func (s *Session) Raw(sql string, values ...any) *Session {
 	return s
 }
 
+func parseBraces(sqlStr string) string {
+	for i := 1; strings.Contains(sqlStr, "?"); i++ {
+		sqlStr = strings.Replace(sqlStr, "?", "$"+strconv.Itoa(i), 1)
+	}
+	return sqlStr
+}
+
 func (s *Session) Exec() (result sql.Result, err error) {
 	defer s.Clear()
-	log.Info(s.sql.String(), s.sqlVars)
-	if result, err = s.DB().Exec(s.sql.String(), s.sqlVars...); err != nil {
+	sqlStr := parseBraces(s.sql.String())
+	log.Info(sqlStr, s.sqlVars)
+	if result, err = s.DB().Exec(sqlStr, s.sqlVars...); err != nil {
 		log.Error(err)
 	}
 	return
@@ -67,14 +76,16 @@ func (s *Session) Exec() (result sql.Result, err error) {
 
 func (s *Session) QueryRow() *sql.Row {
 	defer s.Clear()
-	log.Info(s.sql.String(), s.sqlVars)
-	return s.DB().QueryRow(s.sql.String(), s.sqlVars...)
+	sqlStr := parseBraces(s.sql.String())
+	log.Info(sqlStr, s.sqlVars)
+	return s.DB().QueryRow(sqlStr, s.sqlVars...)
 }
 
 func (s *Session) QueryRows() (rows *sql.Rows, err error) {
 	defer s.Clear()
-	log.Info(s.sql.String(), s.sqlVars)
-	if rows, err = s.DB().Query(s.sql.String(), s.sqlVars...); err != nil {
+	sqlStr := parseBraces(s.sql.String())
+	log.Info(sqlStr, s.sqlVars)
+	if rows, err = s.DB().Query(sqlStr, s.sqlVars...); err != nil {
 		log.Error(err)
 	}
 	return
