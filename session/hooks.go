@@ -29,5 +29,4 @@ func (s *Session) CallMethod(method string, value any) {
 			}
 		}
 	}
-	return
 }

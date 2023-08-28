@@ -26,6 +26,7 @@ func (a *Account) AfterQuery(s *Session) error {
 
 func TestSession_CallMethod(t *testing.T) {
 	s := newSession().Model(&Account{})
+	defer s.DropTable()
 	err1 := s.DropTable()
 	assert.NoError(t, err1)
 	err2 := s.CreateTable()

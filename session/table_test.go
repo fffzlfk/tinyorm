@@ -2,17 +2,14 @@ package session
 
 import (
 	"testing"
+	"tinyorm/utils/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type Person struct {
-	Name string `tinyorm:"PRIMARY KEY"`
-	Age  int
-}
-
 func TestSession_CreateTable(t *testing.T) {
-	s := newSession().Model(&Person{})
+	s := newSession().Model(&tests.Person{})
+	defer s.DropTable()
 	var err error
 	err = s.DropTable()
 	assert.NoError(t, err)
